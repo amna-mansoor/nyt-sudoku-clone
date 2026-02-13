@@ -124,3 +124,13 @@ body {
 .numpad-btn:hover {
   background-color: #e0e0e0;
 }
+.conflict-dot {
+  position: absolute;
+  bottom: 15%;
+  right: 22%;
+  width: clamp(6px, 1.2vw, 8px);
+  height: clamp(6px, 1.2vw, 8px);
+  background-color: #f23d3d;
+  border-radius: 50%;
+  pointer-events: none;
+}

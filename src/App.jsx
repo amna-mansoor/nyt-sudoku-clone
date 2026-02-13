@@ -9,13 +9,13 @@ const HelpIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="22" height
 function App() {
   const [grid, setGrid] = useState([]); 
   const [solvedGrid, setSolvedGrid] = useState([]);
+  const [history, setHistory] = useState([]); // Array to store previous moves
   const [selected, setSelected] = useState(null); 
   const [difficulty, setDifficulty] = useState('Easy');
   const [mode, setMode] = useState('normal'); 
   const [autoCandidate, setAutoCandidate] = useState(false);
   const [timer, setTimer] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [mistakes, setMistakes] = useState(0);
   const [gameWon, setGameWon] = useState(false);
   const [numberCounts, setNumberCounts] = useState({});
 
@@ -26,14 +26,13 @@ function App() {
         val: val === 0 ? null : val,
         isGiven: val !== 0,
         notes: [],
-        isError: false
       }))
     );
     setSolvedGrid(solved);
     setGrid(newGrid);
+    setHistory([]); 
     setDifficulty(diff);
     setTimer(0);
-    setMistakes(0);
     setIsPaused(false);
     setGameWon(false);
     setSelected(null);
@@ -72,14 +71,10 @@ function App() {
     setNumberCounts(counts);
 
     if (isFull && !gameWon) {
-      // Validate against solution
       const isCorrect = grid.every((row, r) => 
         row.every((cell, c) => cell.val === solvedGrid[r][c])
       );
-      
-      if (isCorrect) {
-        setGameWon(true);
-      }
+      if (isCorrect) setGameWon(true);
     }
   }, [grid, solvedGrid, gameWon]);
 
@@ -108,6 +103,11 @@ function App() {
     }
   };
 
+  const saveToHistory = () => {
+    const snapshot = grid.map(row => row.map(cell => ({ ...cell, notes: [...cell.notes] })));
+    setHistory(prev => [...prev, snapshot]);
+  };
+
   const handleInput = (num) => {
     if (!selected || isPaused || gameWon) return;
     const [r, c] = selected;
@@ -116,6 +116,8 @@ function App() {
 
     if (numberCounts[num] >= 9 && cell.val !== num) return;
 
+    saveToHistory(); 
+
     const newGrid = [...grid];
     newGrid[r] = [...grid[r]];
     newGrid[r][c] = { ...cell };
@@ -123,16 +125,9 @@ function App() {
     if (mode === 'normal') {
       if (newGrid[r][c].val === num) {
         newGrid[r][c].val = null;
-        newGrid[r][c].isError = false;
       } else {
         newGrid[r][c].val = num;
         newGrid[r][c].notes = []; 
-        if (num !== solvedGrid[r][c]) {
-          newGrid[r][c].isError = true;
-          setMistakes(m => m + 1);
-        } else {
-          newGrid[r][c].isError = false;
-        }
       }
     } else if (mode === 'candidate' && !autoCandidate) {
        if (newGrid[r][c].val) return; 
@@ -151,11 +146,18 @@ function App() {
     const [r, c] = selected;
     if (grid[r][c].isGiven) return;
     
+    saveToHistory(); 
     const newGrid = [...grid];
-    newGrid[r][c].val = null;
-    newGrid[r][c].isError = false;
+    newGrid[r][c] = { ...grid[r][c], val: null };
     setGrid(newGrid);
-  }
+  };
+
+  const handleUndo = () => {
+    if (history.length === 0 || isPaused || gameWon) return;
+    const previousGrid = history[history.length - 1];
+    setGrid(previousGrid);
+    setHistory(prev => prev.slice(0, -1)); 
+  };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -171,9 +173,10 @@ function App() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selected, grid, mode, isPaused, autoCandidate, numberCounts, gameWon]);
+  }, [selected, grid, mode, isPaused, autoCandidate, numberCounts, gameWon, history]);
 
   const isSelected = (r, c) => selected && selected[0] === r && selected[1] === c;
+  
   const isRelated = (r, c) => {
     if (!selected) return false;
     const [sr, sc] = selected;
@@ -182,11 +185,32 @@ function App() {
     const startCol = sc - (sc % 3);
     return r >= startRow && r < startRow + 3 && c >= startCol && c < startCol + 3;
   };
+  
   const isSameValue = (val) => {
     if (!selected || !val) return false;
     const [sr, sc] = selected;
     const selectedVal = grid[sr][sc].val;
     return selectedVal === val;
+  };
+
+  const isConflicting = (r, c) => {
+    const val = grid[r][c].val;
+    if (!val) return false;
+
+    for (let i = 0; i < 9; i++) {
+        if (i !== c && grid[r][i].val === val) return true;
+        if (i !== r && grid[i][c].val === val) return true;
+    }
+    const boxR = Math.floor(r / 3) * 3;
+    const boxC = Math.floor(c / 3) * 3;
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            const curR = boxR + i;
+            const curC = boxC + j;
+            if ((curR !== r || curC !== c) && grid[curR][curC].val === val) return true;
+        }
+    }
+    return false;
   };
 
   const TogglePill = () => (
@@ -230,7 +254,7 @@ function App() {
         </div>
       )}
 
-      {/* HEADER */}
+      {}
       <div className="w-full border-b border-gray-300 mb-2">
          <div className="max-w-[1000px] mx-auto px-4 h-12 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -246,12 +270,12 @@ function App() {
       {}
       <div className="max-w-[1000px] mx-auto w-full px-4 flex justify-between items-center mb-6 text-sm font-medium">
          <div className="flex gap-6 items-center">
-            {/* Difficulty Selector */}
-            <div className="relative group">
+            {}
+            <div className="relative group z-30">
                <button className="flex items-center gap-1 font-bold hover:text-gray-600">
                   {difficulty} <span className="text-[10px]">▼</span>
                </button>
-               <div className="absolute top-full left-0 bg-white shadow-lg border border-gray-200 py-2 rounded-md hidden group-hover:block z-20 w-32">
+               <div className="absolute top-full left-0 bg-white shadow-lg border border-gray-200 py-2 rounded-md hidden group-hover:block w-32">
                   {['Easy', 'Medium', 'Hard'].map(d => (
                      <button 
                         key={d} 
@@ -275,7 +299,7 @@ function App() {
       {}
       <div className="w-full max-w-[1000px] mx-auto flex flex-col lg:flex-row justify-center gap-8 px-4 items-start">
         
-        {/* GRID */}
+        {}
         <div className="sudoku-container mb-6 lg:mb-0">
           <div className="sudoku-grid">
             {grid.map((row, r) => (
@@ -287,12 +311,14 @@ function App() {
                     "given": cell.isGiven,
                     "selected": isSelected(r, c) || (isSameValue(cell.val) && cell.val !== null),
                     "related": !isSelected(r, c) && !isSameValue(cell.val) && isRelated(r, c),
-                    "text-nyt-error": cell.isError,
-                    "text-black": !cell.isError,
                   })}
                 >
                   {cell.val ? (
-                    <span>{cell.val}</span>
+                    <>
+                      <span>{cell.val}</span>
+                      {}
+                      {isConflicting(r, c) && <div className="conflict-dot"></div>}
+                    </>
                   ) : (
                     <div className="candidates-grid">
                       {[1,2,3,4,5,6,7,8,9].map(n => (
@@ -332,16 +358,33 @@ function App() {
 
                 <div className="grid grid-cols-2 gap-3">
                     <button onClick={handleClear} className="h-12 bg-gray-200 text-gray-700 rounded text-sm font-bold hover:bg-gray-300 transition-colors">✕</button>
-                    <button className="h-12 bg-gray-200 text-gray-700 rounded text-sm font-bold hover:bg-gray-300 transition-colors">Undo</button>
+                    <button 
+                       onClick={handleUndo} 
+                       disabled={history.length === 0}
+                       className={classNames("h-12 bg-gray-200 text-gray-700 rounded text-sm font-bold transition-colors", {
+                         "opacity-50 cursor-not-allowed": history.length === 0,
+                         "hover:bg-gray-300": history.length > 0
+                       })}
+                    >
+                      Undo
+                    </button>
                 </div>
             </div>
-
 
             {}
             <div className="flex lg:hidden flex-col gap-4">
                 <div className="flex gap-4 h-12">
                     <div className="w-48 flex-shrink-0"><TogglePill /></div>
-                    <button className="flex-1 bg-gray-200 text-gray-700 rounded font-bold hover:bg-gray-300 transition-colors">Undo</button>
+                    <button 
+                       onClick={handleUndo} 
+                       disabled={history.length === 0}
+                       className={classNames("flex-1 bg-gray-200 text-gray-700 rounded font-bold transition-colors", {
+                         "opacity-50 cursor-not-allowed": history.length === 0,
+                         "hover:bg-gray-300": history.length > 0
+                       })}
+                    >
+                      Undo
+                    </button>
                 </div>
 
                 <div className="grid grid-cols-5 gap-2">
