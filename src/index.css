@@ -103,9 +103,9 @@ body {
 }
 
 .candidate {
-  font-size: clamp(9px, 1.4vw, 12px);
-  font-weight: 400;
-  color: #a8a8a8; 
+  font-size: clamp(11px, 2vw, 14px); 
+  font-weight: 500; 
+  color: #716c6c; 
   display: flex;
   justify-content: center;
   align-items: center;
