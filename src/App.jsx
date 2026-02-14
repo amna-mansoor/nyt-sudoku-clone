@@ -9,7 +9,7 @@ const HelpIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="22" height
 function App() {
   const [grid, setGrid] = useState([]); 
   const [solvedGrid, setSolvedGrid] = useState([]);
-  const [history, setHistory] = useState([]); // Array to store previous moves
+  const [history, setHistory] = useState([]); 
   const [selected, setSelected] = useState(null); 
   const [difficulty, setDifficulty] = useState('Easy');
   const [mode, setMode] = useState('normal'); 
@@ -78,26 +78,28 @@ function App() {
     }
   }, [grid, solvedGrid, gameWon]);
 
-  useEffect(() => {
-    if (!autoCandidate || grid.length === 0 || gameWon) return;
-    const newGrid = grid.map((row, r) => row.map((cell, c) => {
+
+  const calculateCandidates = (currentGrid) => {
+    return currentGrid.map((row, r) => row.map((cell, c) => {
       if (cell.val) return { ...cell, notes: [] };
       const candidates = [];
       for (let n = 1; n <= 9; n++) {
-        const currentVals = grid.map(r => r.map(c => c.val || 0));
+        const currentVals = currentGrid.map(r => r.map(c => c.val || 0));
         if (isValidMove(currentVals, r, c, n)) candidates.push(n);
       }
       return { ...cell, notes: candidates };
     }));
-    if (JSON.stringify(newGrid) !== JSON.stringify(grid)) setGrid(newGrid);
-  }, [grid, autoCandidate, gameWon]);
+  };
 
   const toggleAutoCandidate = (e) => {
     const isChecked = e.target.checked;
     setAutoCandidate(isChecked);
+    
     if (isChecked) {
       setMode('normal'); 
+      setGrid(prev => calculateCandidates(prev));
     } else {
+
       const newGrid = grid.map(row => row.map(cell => ({ ...cell, notes: [] })));
       setGrid(newGrid);
     }
@@ -118,7 +120,7 @@ function App() {
 
     saveToHistory(); 
 
-    const newGrid = [...grid];
+    let newGrid = [...grid];
     newGrid[r] = [...grid[r]];
     newGrid[r][c] = { ...cell };
 
@@ -129,7 +131,13 @@ function App() {
         newGrid[r][c].val = num;
         newGrid[r][c].notes = []; 
       }
-    } else if (mode === 'candidate' && !autoCandidate) {
+      
+      if (autoCandidate) {
+        newGrid = calculateCandidates(newGrid);
+      }
+      
+    } else if (mode === 'candidate') {
+
        if (newGrid[r][c].val) return; 
        const notes = newGrid[r][c].notes;
        if (notes.includes(num)) {
@@ -147,8 +155,14 @@ function App() {
     if (grid[r][c].isGiven) return;
     
     saveToHistory(); 
-    const newGrid = [...grid];
+    
+    let newGrid = [...grid];
     newGrid[r][c] = { ...grid[r][c], val: null };
+
+    if (autoCandidate) {
+        newGrid = calculateCandidates(newGrid);
+    }
+
     setGrid(newGrid);
   };
 
@@ -196,7 +210,6 @@ function App() {
   const isConflicting = (r, c) => {
     const val = grid[r][c].val;
     if (!val) return false;
-
     for (let i = 0; i < 9; i++) {
         if (i !== c && grid[r][i].val === val) return true;
         if (i !== r && grid[i][c].val === val) return true;
@@ -225,11 +238,10 @@ function App() {
            Normal
          </button>
          <button 
-           onClick={() => { if(!autoCandidate) setMode('candidate'); }}
+           onClick={() => { setMode('candidate'); }} // Removed the restriction here
            className={classNames("flex-1 rounded-sm text-sm font-bold z-10 transition-colors", {
              "bg-black text-white shadow-sm": mode === 'candidate',
-             "text-gray-500 hover:text-black": mode !== 'candidate',
-             "opacity-50 cursor-not-allowed": autoCandidate
+             "text-gray-500 hover:text-black": mode !== 'candidate'
            })}
          >
            Candidate
@@ -270,7 +282,6 @@ function App() {
       {}
       <div className="max-w-[1000px] mx-auto w-full px-4 flex justify-between items-center mb-6 text-sm font-medium">
          <div className="flex gap-6 items-center">
-            {}
             <div className="relative group z-30">
                <button className="flex items-center gap-1 font-bold hover:text-gray-600">
                   {difficulty} <span className="text-[10px]">▼</span>
@@ -316,7 +327,6 @@ function App() {
                   {cell.val ? (
                     <>
                       <span>{cell.val}</span>
-                      {}
                       {isConflicting(r, c) && <div className="conflict-dot"></div>}
                     </>
                   ) : (
