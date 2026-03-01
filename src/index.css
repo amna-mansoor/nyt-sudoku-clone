@@ -5,15 +5,15 @@
 ========================= */
 @theme {
   --color-nyt-black: #000000;
-  --color-nyt-orange: #f59e0b;
-  --color-nyt-beige: #f3e7cc;
-  --color-nyt-border-thick: #000000;
-  --color-nyt-border-box: #979797;
-  --color-nyt-border-thin: #d0d0d0;
-  --color-nyt-given-bg: #d8cbb4;
-
-  --font-serif: "KarnakCondensed", "Cheltenham", Georgia, serif;
-  --font-sans: "Franklin", "Franklin Gothic", Arial, sans-serif;
+  --color-nyt-blue: #2563eb; /* NYT uses blue for user inputs */
+  --color-nyt-orange: #ffaa00; /* Selected cell */
+  --color-nyt-related: #e8e4d9; /* Related cells (row/col/box) */
+  --color-nyt-border-thick: #2b2b2b;
+  --color-nyt-border-box: #6b6b6b;
+  --color-nyt-border-thin: #cccccc;
+  
+  --font-serif: "Karnak", "Cheltenham", Georgia, serif;
+  --font-sans: "Franklin Gothic", "Helvetica Neue", Arial, sans-serif;
 }
 
 /* =========================
@@ -21,9 +21,8 @@
 ========================= */
 body {
   margin: 0;
-  padding-top: 20px; /* NYT top spacing */
   font-family: var(--font-sans);
-  background-color: grey;
+  background-color: #ffffff; /* Removed grey background */
   color: var(--color-nyt-black);
 }
 
@@ -32,7 +31,7 @@ body {
 ========================= */
 .sudoku-container {
   width: 100%;
-  max-width: 500px;
+  max-width: 480px; /* Matched NYT proportions */
   margin: 0 auto;
   box-sizing: border-box;
   user-select: none;
@@ -47,8 +46,9 @@ body {
   grid-template-rows: repeat(9, 1fr);
   width: 100%;
   aspect-ratio: 1 / 1;
-  border: 6px solid var(--color-nyt-border-thick);
+  border: 3px solid var(--color-nyt-border-thick);
   background: var(--color-nyt-border-thick);
+  gap: 0;
 }
 
 /* =========================
@@ -56,56 +56,55 @@ body {
 ========================= */
 .cell {
   position: relative;
-  background-color: white;
+  background-color: #ffffff;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
 
   font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: clamp(1.6rem, 3.8vw, 2.2rem);
+  font-size: clamp(1.8rem, 4.5vw, 2.6rem);
   letter-spacing: -0.02em;
-  color: var(--color-nyt-black);
-
+  
   border-right: 1px solid var(--color-nyt-border-thin);
   border-bottom: 1px solid var(--color-nyt-border-thin);
   box-sizing: border-box;
 }
 
 /* Remove outer thin borders */
-.cell:nth-child(9n) {
-  border-right: none;
-}
-.cell:nth-child(n+73) {
-  border-bottom: none;
-}
+.cell:nth-child(9n) { border-right: none; }
+.cell:nth-child(n+73) { border-bottom: none; }
 
 /* 3x3 vertical separators */
 .cell:nth-child(3n):not(:nth-child(9n)) {
-  border-right: 4px solid var(--color-nyt-border-box);
+  border-right: 2px solid var(--color-nyt-border-box);
 }
 
 /* 3x3 horizontal separators */
 .cell:nth-child(n+19):nth-child(-n+27),
 .cell:nth-child(n+46):nth-child(-n+54) {
-  border-bottom: 4px solid var(--color-nyt-border-box);
+  border-bottom: 2px solid var(--color-nyt-border-box);
 }
 
 /* =========================
-   CELL STATES
+   CELL STATES & TEXT
 ========================= */
 .cell.given {
-  background-color: var(--color-nyt-given-bg);
+  font-weight: 700;
+  color: var(--color-nyt-black);
 }
 
-.cell.selected,
-.cell.same-value {
+.cell.user-input {
+  font-weight: 400;
+  color: var(--color-nyt-blue); /* Distinct user input color */
+}
+
+.cell.selected {
   background-color: var(--color-nyt-orange) !important;
 }
 
 .cell.related {
-  background-color: var(--color-nyt-beige);
+  background-color: var(--color-nyt-related);
 }
 
 /* =========================
@@ -118,12 +117,13 @@ body {
   width: 100%;
   height: 100%;
   pointer-events: none;
+  padding: 2px;
 }
 
 .candidate {
-  font-size: clamp(9px, 1.8vw, 13px);
+  font-size: clamp(10px, 2vw, 14px);
   font-weight: 400;
-  color: #716c6c;
+  color: #666;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -135,18 +135,31 @@ body {
    NUMBER PAD
 ========================= */
 .numpad-btn {
-  background-color: #f3f3f3;
-  border: 1px solid #e0e0e0;
+  background-color: #e2e2e2;
   color: var(--color-nyt-black);
   font-family: var(--font-sans);
-  font-weight: 600;
-  border-radius: 6px;
-  height: 48px;
+  font-weight: 700;
+  border-radius: 4px;
+  height: 60px;
+  font-size: 2.2rem;
   transition: background-color 0.1s;
+  border: none; /* Removed borders & shadows */
+  cursor: pointer;
 }
 
-.numpad-btn:hover {
-  background-color: #e6e6e6;
+.numpad-btn.small {
+  height: 48px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.numpad-btn:hover:not(:disabled) {
+  background-color: #d1d1d1;
+}
+
+.numpad-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 /* =========================
@@ -154,18 +167,11 @@ body {
 ========================= */
 .conflict-dot {
   position: absolute;
-  bottom: 15%;
-  right: 22%;
-  width: clamp(6px, 1.2vw, 8px);
-  height: clamp(6px, 1.2vw, 8px);
-  background-color: #f23d3d;
+  bottom: 12%;
+  right: 15%;
+  width: 6px;
+  height: 6px;
+  background-color: #e00000;
   border-radius: 50%;
   pointer-events: none;
-}
-
-/* =========================
-   AUTO CANDIDATE SPACING
-========================= */
-.auto-candidate {
-  margin-bottom: 30px; /* small breathing space like NYT */
 }
