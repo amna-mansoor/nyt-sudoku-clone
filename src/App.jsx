@@ -2,9 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import classNames from 'classnames';
 import { generateSudoku, isValidMove } from './sudoku';
 
-const SettingsIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>;
-const PrintIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>;
-const HelpIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>;
+const SettingsIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>;
+const PrintIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>;
+const HelpIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>;
+const HamburgerIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>;
 
 function App() {
   const [grid, setGrid] = useState([]); 
@@ -78,7 +79,6 @@ function App() {
     }
   }, [grid, solvedGrid, gameWon]);
 
-
   const calculateCandidates = (currentGrid) => {
     return currentGrid.map((row, r) => row.map((cell, c) => {
       if (cell.val) return { ...cell, notes: [] };
@@ -99,7 +99,6 @@ function App() {
       setMode('normal'); 
       setGrid(prev => calculateCandidates(prev));
     } else {
-
       const newGrid = grid.map(row => row.map(cell => ({ ...cell, notes: [] })));
       setGrid(newGrid);
     }
@@ -137,7 +136,6 @@ function App() {
       }
       
     } else if (mode === 'candidate') {
-
        if (newGrid[r][c].val) return; 
        const notes = newGrid[r][c].notes;
        if (notes.includes(num)) {
@@ -199,13 +197,6 @@ function App() {
     const startCol = sc - (sc % 3);
     return r >= startRow && r < startRow + 3 && c >= startCol && c < startCol + 3;
   };
-  
-  const isSameValue = (val) => {
-    if (!selected || !val) return false;
-    const [sr, sc] = selected;
-    const selectedVal = grid[sr][sc].val;
-    return selectedVal === val;
-  };
 
   const isConflicting = (r, c) => {
     const val = grid[r][c].val;
@@ -227,21 +218,21 @@ function App() {
   };
 
   const TogglePill = () => (
-    <div className="bg-gray-100 p-1 rounded-sm flex relative h-10 w-full">
+    <div className="flex rounded-[4px] border border-gray-300 overflow-hidden w-full h-[40px] mb-2 bg-white">
          <button 
-           onClick={() => { setMode('normal'); }}
-           className={classNames("flex-1 rounded-sm text-sm font-bold z-10 transition-colors", {
-             "bg-black text-white shadow-sm": mode === 'normal',
-             "text-gray-500 hover:text-black": mode !== 'normal'
+           onClick={() => setMode('normal')}
+           className={classNames("flex-1 text-sm transition-colors font-medium", {
+             "bg-[#121212] text-white": mode === 'normal',
+             "bg-white text-gray-500 hover:bg-gray-50": mode !== 'normal'
            })}
          >
            Normal
          </button>
          <button 
-           onClick={() => { setMode('candidate'); }} // Removed the restriction here
-           className={classNames("flex-1 rounded-sm text-sm font-bold z-10 transition-colors", {
-             "bg-black text-white shadow-sm": mode === 'candidate',
-             "text-gray-500 hover:text-black": mode !== 'candidate'
+           onClick={() => setMode('candidate')}
+           className={classNames("flex-1 text-sm transition-colors font-medium", {
+             "bg-[#121212] text-white": mode === 'candidate',
+             "bg-white text-gray-500 hover:bg-gray-50": mode !== 'candidate'
            })}
          >
            Candidate
@@ -252,7 +243,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col font-sans text-nyt-black select-none bg-white relative">
       
-      {}
+      {/* Victory Screen */}
       {gameWon && (
         <div className="fixed inset-0 z-50 bg-white/90 flex flex-col items-center justify-center animate-in fade-in duration-300">
            <h1 className="font-serif text-5xl font-bold mb-4">Congratulations!</h1>
@@ -266,51 +257,67 @@ function App() {
         </div>
       )}
 
-      {}
-      <div className="w-full border-b border-gray-300 mb-2">
-         <div className="max-w-[1000px] mx-auto px-4 h-12 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-                 <h1 className="font-serif font-black text-2xl tracking-tight">Sudoku</h1>
-                 <span className="text-gray-500 font-serif text-lg">{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+      {/* NYT Primary Header Bar */}
+      <div className="w-full border-b border-gray-200">
+         <div className="w-full px-4 h-12 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+                 <button className="hover:bg-gray-100 p-1 rounded transition-colors"><HamburgerIcon /></button>
+                 <h1 className="font-serif font-black text-2xl tracking-tight flex items-center gap-1">
+                    <span className="text-3xl">𝕿</span> Games
+                 </h1>
             </div>
-            <div className="hidden md:block">
-              <button className="bg-black text-white text-[10px] font-bold px-3 py-1 tracking-widest uppercase">Subscribe</button>
+            <div className="hidden md:flex items-center gap-3">
+              <button className="bg-black text-white text-[11px] font-bold px-4 py-2 uppercase tracking-wide rounded-[3px]">75% Off</button>
+              <button className="border border-gray-300 text-gray-800 text-[11px] font-bold px-4 py-2 uppercase tracking-wide rounded-[3px] hover:bg-gray-50">Log In</button>
             </div>
          </div>
       </div>
 
-      {}
-      <div className="max-w-[1000px] mx-auto w-full px-4 flex justify-between items-center mb-6 text-sm font-medium">
-         <div className="flex gap-6 items-center">
-            <div className="relative group z-30">
-               <button className="flex items-center gap-1 font-bold hover:text-gray-600">
-                  {difficulty} <span className="text-[10px]">▼</span>
-               </button>
-               <div className="absolute top-full left-0 bg-white shadow-lg border border-gray-200 py-2 rounded-md hidden group-hover:block w-32">
-                  {['Easy', 'Medium', 'Hard'].map(d => (
-                     <button 
-                        key={d} 
-                        onClick={() => startNewGame(d)}
-                        className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm"
-                     >
-                        {d}
-                     </button>
-                  ))}
+      {/* NYT Secondary Control Bar */}
+      <div className="w-full border-b border-gray-200 mb-6">
+         <div className="max-w-[1000px] mx-auto w-full px-4 py-3 flex justify-between items-center text-sm">
+            
+            <button className="font-bold text-lg text-gray-800 hover:text-black transition-colors pl-2">{'<'}</button>
+            
+            <div className="flex gap-4 items-center">
+               <div className="relative group z-30">
+                  <button className="flex items-center gap-1 font-medium hover:text-gray-600">
+                     {difficulty}
+                  </button>
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 bg-white shadow-lg border border-gray-200 py-2 rounded-md hidden group-hover:block w-32 mt-1">
+                     {['Easy', 'Medium', 'Hard'].map(d => (
+                        <button 
+                           key={d} 
+                           onClick={() => startNewGame(d)}
+                           className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm"
+                        >
+                           {d}
+                        </button>
+                     ))}
+                  </div>
                </div>
+               <span className="font-medium text-gray-800 w-[35px] text-right">{formatTime(timer)}</span>
+               <button 
+                 onClick={() => setIsPaused(!isPaused)} 
+                 className="font-bold text-xs px-2 hover:bg-gray-100 rounded h-6 flex items-center justify-center tracking-widest"
+               >
+                 II
+               </button>
             </div>
-            <span>{formatTime(timer)}</span>
-         </div>
-         <div className="flex gap-4 items-center text-gray-700">
-             <button className="hover:text-black flex items-center gap-1">Print <PrintIcon /></button>
-             <button className="hover:text-black"><HelpIcon /></button>
-             <button className="hover:text-black"><SettingsIcon /></button>
+            
+            <div className="flex gap-4 items-center text-gray-800">
+                <button className="hover:text-black flex items-center gap-1 font-medium hidden sm:flex">Print <PrintIcon /></button>
+                <button className="hover:text-black"><HelpIcon /></button>
+                <button className="hover:text-black"><SettingsIcon /></button>
+                <button className="hover:text-black font-black text-lg pb-2 tracking-widest hidden sm:block">...</button>
+            </div>
          </div>
       </div>
 
-      {}
-      <div className="w-full max-w-[1000px] mx-auto flex flex-col lg:flex-row justify-center gap-8 px-4 items-start">
+      {/* Game Area */}
+      <div className="w-full max-w-[900px] mx-auto flex flex-col lg:flex-row justify-center gap-8 lg:gap-14 px-4 items-start">
         
-        {}
+        {/* Sudoku Board */}
         <div className="sudoku-container mb-6 lg:mb-0">
           <div className="sudoku-grid">
             {grid.map((row, r) => (
@@ -320,8 +327,9 @@ function App() {
                   onClick={() => setSelected([r, c])}
                   className={classNames("cell", {
                     "given": cell.isGiven,
-                    "selected": isSelected(r, c) || (isSameValue(cell.val) && cell.val !== null),
-                    "related": !isSelected(r, c) && !isSameValue(cell.val) && isRelated(r, c),
+                    "user-input": !cell.isGiven && cell.val,
+                    "selected": isSelected(r, c),
+                    "related": !isSelected(r, c) && isRelated(r, c),
                   })}
                 >
                   {cell.val ? (
@@ -344,91 +352,42 @@ function App() {
           </div>
         </div>
 
-        {}
-        <div className="w-full max-w-[500px] lg:max-w-[300px] mx-auto lg:mx-0">
+        {/* Control Panel */}
+        <div className="w-full max-w-[480px] lg:max-w-[260px] mx-auto lg:mx-0 pt-1">
 
-            {}
-            <div className="hidden lg:flex flex-col gap-4 pt-1">
-                <div className="w-48"><TogglePill /></div>
+            {/* Always visible responsive control panel */}
+            <div className="flex flex-col gap-3">
                 
-                <div className="grid grid-cols-3 gap-3">
+                <TogglePill />
+                
+                <div className="grid grid-cols-3 gap-2">
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
                     <button 
                         key={num} 
                         onClick={() => handleInput(num)} 
                         disabled={numberCounts[num] >= 9}
-                        className={classNames("numpad-btn h-16 shadow-sm border border-gray-200", {
-                            "opacity-20 pointer-events-none bg-gray-200": numberCounts[num] >= 9
-                        })}
+                        className="numpad-btn"
                     >
                         {num}
                     </button>
                     ))}
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                    <button onClick={handleClear} className="h-12 bg-gray-200 text-gray-700 rounded text-sm font-bold hover:bg-gray-300 transition-colors">✕</button>
+                <div className="grid grid-cols-2 gap-2 mt-1">
+                    <button onClick={handleClear} className="numpad-btn small flex items-center justify-center text-xl pb-1">✕</button>
                     <button 
-                       onClick={handleUndo} 
-                       disabled={history.length === 0}
-                       className={classNames("h-12 bg-gray-200 text-gray-700 rounded text-sm font-bold transition-colors", {
-                         "opacity-50 cursor-not-allowed": history.length === 0,
-                         "hover:bg-gray-300": history.length > 0
-                       })}
-                    >
-                      Undo
-                    </button>
-                </div>
-            </div>
-
-            {}
-            <div className="flex lg:hidden flex-col gap-4">
-                <div className="flex gap-4 h-12">
-                    <div className="w-48 flex-shrink-0"><TogglePill /></div>
-                    <button 
-                       onClick={handleUndo} 
-                       disabled={history.length === 0}
-                       className={classNames("flex-1 bg-gray-200 text-gray-700 rounded font-bold transition-colors", {
-                         "opacity-50 cursor-not-allowed": history.length === 0,
-                         "hover:bg-gray-300": history.length > 0
-                       })}
+                        onClick={handleUndo} 
+                        disabled={history.length === 0}
+                        className="numpad-btn small"
                     >
                       Undo
                     </button>
                 </div>
 
-                <div className="grid grid-cols-5 gap-2">
-                    {[1, 2, 3, 4, 5].map(num => (
-                        <button 
-                           key={num} 
-                           onClick={() => handleInput(num)} 
-                           disabled={numberCounts[num] >= 9}
-                           className={classNames("numpad-btn h-14 text-2xl shadow-sm border border-gray-200", {
-                             "opacity-20 pointer-events-none bg-gray-200": numberCounts[num] >= 9
-                           })}
-                        >
-                            {num}
-                        </button>
-                    ))}
-                    {[6, 7, 8, 9].map(num => (
-                        <button 
-                           key={num} 
-                           onClick={() => handleInput(num)} 
-                           disabled={numberCounts[num] >= 9}
-                           className={classNames("numpad-btn h-14 text-2xl shadow-sm border border-gray-200", {
-                             "opacity-20 pointer-events-none bg-gray-200": numberCounts[num] >= 9
-                           })}
-                        >
-                            {num}
-                        </button>
-                    ))}
-                    <button onClick={handleClear} className="numpad-btn h-14 text-2xl shadow-sm border border-gray-200 flex items-center justify-center pb-1">✕</button>
+                <div className="flex items-center gap-2 mt-3 ml-1">
+                    <input type="checkbox" id="autoCand" checked={autoCandidate} onChange={toggleAutoCandidate} className="w-3.5 h-3.5 accent-[#121212] cursor-pointer" />
+                    <label htmlFor="autoCand" className="text-xs text-gray-600 select-none cursor-pointer">Auto Candidate Mode</label>
                 </div>
-            </div>
-
-            <div className="flex items-center gap-2 mt-4 ml-1">
-                <input type="checkbox" id="autoCand" checked={autoCandidate} onChange={toggleAutoCandidate} className="w-4 h-4 accent-black cursor-pointer" />
-                <label htmlFor="autoCand" className="text-xs font-medium text-gray-800 select-none cursor-pointer">Auto Candidate Mode</label>
             </div>
         </div>
       </div>
