@@ -10,7 +10,7 @@
 ========================= */
 @theme {
   --color-nyt-black: #000000;
-  --color-nyt-selection: #fbca3e;    /* NYT Gold for the active single cell */
+  --color-nyt-selection: #f59e0b;    /* NYT Gold for the active single cell */
   --color-nyt-related: #d3c6af;      /* Your requested highlight for empty cells */
   --color-nyt-related-given: #f9eac2; /* Your requested highlight for "given" cells */
   --color-nyt-border-grid: #9d9d9d;   /* Your requested border color */
