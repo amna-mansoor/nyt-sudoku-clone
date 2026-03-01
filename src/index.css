@@ -23,7 +23,7 @@ body {
   margin: 0;
   padding-top: 20px; /* NYT top spacing */
   font-family: var(--font-sans);
-  background-color: white;
+  background-color: grey;
   color: var(--color-nyt-black);
 }
 
